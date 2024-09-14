@@ -1,12 +1,20 @@
 ---
-title: 关于Valaxy博客搭建
-date: 2024-09-01
-updated: 2024-09-13
-categories: Valaxy 博客
+title: Hello, Valaxy!
+date: 2022-04-01
+updated: 2022-04-01
+categories: Valaxy 笔记
 tags:
   - valaxy
-  - 博客
-  - 建站
+  - 笔记
 top: 1
 ---
 
+## Valaxy
+
+Next Generation Static Blog Framework.
+
+Write your first post!
+
+## Usage
+
+Modify `valaxy.config.ts` to custom your blog.
