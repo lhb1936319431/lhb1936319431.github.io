@@ -7,7 +7,7 @@ export default defineSiteConfig({
   subtitle: '一个人的世界',
   author: {
     name: 'lhb-初入江湖',
-    avatar: '/avatar.png',
+    avatar: '/logo.gif',
     status:{
       emoji: '💰',
       message: '修行中...',
@@ -15,7 +15,7 @@ export default defineSiteConfig({
   },
   description: '记录生活点滴，分享技术心得.',
 
-  favicon: '/avatar.png',
+  favicon: '/logo.gif',
 
   social: [
     {
