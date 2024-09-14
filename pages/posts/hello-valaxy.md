@@ -58,7 +58,7 @@ GitHub Pages是一个静态站点托管服务，以下是搭建步骤：
 
 还能实现动态部署，即博客文章更新后，网站会自动更新。
 
-### 部署Hexo
+部署Hexo框架:
 
 1. 安装Node.js和环境变量配置。
 2. 安装Hexo：`npm install hexo-cli -g`
