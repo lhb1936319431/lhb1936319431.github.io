@@ -1,6 +1,6 @@
 ---
 title: 网络安全CTF-Web-01
-date: 2024-09-01
+date: 2024-09-14
 updated: 2024-09-14
 categories: 网络安全
 tags:
