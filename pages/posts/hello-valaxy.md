@@ -51,7 +51,7 @@ GitHub Pages是一个静态站点托管服务，以下是搭建步骤：
 3. 访问`https://username.github.io`即可看到博客。
 4. 绑定域名，添加DNS解析记录。
 
-## No.4 github pages建站 与 hexo博客框架
+## No.4 hexo博客框架
 我了解到Hexo是一个基于Node.js的博客框架，可以快速搭建个人博客。
 
 配合github pages，可以快速搭建站点，而且绑定域名也很方便。
@@ -67,7 +67,7 @@ GitHub Pages是一个静态站点托管服务，以下是搭建步骤：
 5. 配置部署信息并部署：`hexo d`
 6. 绑定域名。
 
-## No.5 选择hexo博客主题
+## No.5 hexo博客框架主题
 博客的搭建到这里已经能完成访问，但博客的外观、布局、功能让我很不满意，所以我开始寻找hexo博客主题。
 
 经过多个主题的尝试，我最终选择了hexo-theme-yun主题。
@@ -107,8 +107,9 @@ Valaxy博客框架是一个基于node.js的博客框架，可以快速搭建个�
 
 到这里，Valaxy博客框架的搭建已经完成，博客的外观、布局、功能都可以自定义。
 
-## No.8 总结
+## No.8 博客搭建总结
 第一次写博客，写得不好，请多包涵。
 
-博客搭建过程遇到了一些曲折，例如我的 git 始终无法连接 GitHub，GitHub Pages 设置也有问题，此外 valaxy-theme-yun 主题的配置也让我感到困惑。
+博客搭建过程遇到了一些曲折，例如：
+我的 git 始终无法连接 GitHub，GitHub Pages 设置也有问题，此外 valaxy-theme-yun 主题的配置也让我感到困惑。
 
