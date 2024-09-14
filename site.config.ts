@@ -1,6 +1,9 @@
 import { defineSiteConfig } from 'valaxy'
 
 export default defineSiteConfig({
+  encrypt: {
+    enable: true,
+  },
   url: 'https://lhb1936319431.github.io/',
   lang: 'zh-CN',
   title: '山河不入梦の博客',
@@ -14,9 +17,7 @@ export default defineSiteConfig({
     },
   },
   description: '记录生活点滴，分享技术心得.',
-
   favicon: '/favicon.svg',
-
   social: [
     {
       name: 'GitHub',
@@ -43,11 +44,9 @@ export default defineSiteConfig({
       color: '#FF8EB3',
     },
   ],
-
   search: {
     enable: false,
   },
-
   sponsor: {
     enable: false,
     title: '我很可爱，请给我钱！',
