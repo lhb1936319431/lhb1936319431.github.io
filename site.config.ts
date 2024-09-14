@@ -1,7 +1,7 @@
 import { defineSiteConfig } from 'valaxy'
 
 export default defineSiteConfig({
-  url: 'https://lhb1936319431.github.io/lhb1936319431.githup.io/',
+  url: 'https://lhb1936319431.github.io/',
   lang: 'zh-CN',
   title: '山河不入梦の博客',
   subtitle: '一个人的世界',
