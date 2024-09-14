@@ -1,7 +1,3 @@
 ---
-title: 关于站点
+title: 博客の简介
 ---
-
-Valaxy + valaxy-theme-yun Demo Site
-
-- Default Theme: [valaxy-theme-yun](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/)
