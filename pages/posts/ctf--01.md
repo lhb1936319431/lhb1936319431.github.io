@@ -7,7 +7,6 @@ tags:
   - CTF
   - 学习路径
 top: 2
-password: lhb1936319431
 ---
 
 # 学习笔记-01
