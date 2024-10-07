@@ -7,7 +7,7 @@ export default defineSiteConfig({
   url: 'https://lhb1936319431.github.io/',
   lang: 'zh-CN',
   title: '山河不入梦の博客',
-  subtitle: '一个人的世界',
+  subtitle: '----------',
   author: {
     name: 'lhb-初入江湖',
     avatar: '/favicon.svg',
@@ -16,7 +16,7 @@ export default defineSiteConfig({
       message: '修行中...',
     },
   },
-  description: '记录生活点滴，分享技术心得.',
+  description: '过去无法挽回，未来可以改变。',
   favicon: '/favicon.svg',
   social: [
     {
