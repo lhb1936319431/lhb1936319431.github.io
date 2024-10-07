@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>山河不入梦の博客</title>
+        <link>https://lhb1936319431.github.io/</link>
+        <description>过去无法挽回，未来可以改变。</description>
+        <lastBuildDate>Mon, 07 Oct 2024 07:18:38 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>https://github.com/jpmonette/feed</generator>
+        <image>
+            <title>山河不入梦の博客</title>
+            <url>https://lhb1936319431.github.io/favicon.svg</url>
+            <link>https://lhb1936319431.github.io/</link>
+        </image>
+        <copyright>CC BY-NC-SA 4.0 2024 © lhb-初入江湖</copyright>
+        <atom:link href="https://lhb1936319431.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+    </channel>
+</rss>

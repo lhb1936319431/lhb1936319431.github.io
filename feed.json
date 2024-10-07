@@ -1,0 +1,13 @@
+{
+    "version": "https://jsonfeed.org/version/1",
+    "title": "山河不入梦の博客",
+    "home_page_url": "https://lhb1936319431.github.io/",
+    "feed_url": "https://lhb1936319431.github.io/feed.json",
+    "description": "过去无法挽回，未来可以改变。",
+    "icon": "https://lhb1936319431.github.io/favicon.svg",
+    "author": {
+        "name": "lhb-初入江湖",
+        "url": "https://valaxy.site"
+    },
+    "items": []
+}

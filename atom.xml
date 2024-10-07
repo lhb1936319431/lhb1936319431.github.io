@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://lhb1936319431.github.io/</id>
+    <title>山河不入梦の博客</title>
+    <updated>2024-10-07T07:18:38.599Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <author>
+        <name>lhb-初入江湖</name>
+        <email>i@valaxy.site</email>
+        <uri>https://valaxy.site</uri>
+    </author>
+    <link rel="alternate" href="https://lhb1936319431.github.io/"/>
+    <link rel="self" href="https://lhb1936319431.github.io/atom.xml"/>
+    <subtitle>过去无法挽回，未来可以改变。</subtitle>
+    <logo>https://lhb1936319431.github.io/favicon.svg</logo>
+    <icon>https://lhb1936319431.github.io/favicon.svg</icon>
+    <rights>CC BY-NC-SA 4.0 2024 © lhb-初入江湖</rights>
+</feed>
