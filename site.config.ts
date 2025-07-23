@@ -4,7 +4,7 @@ export default defineSiteConfig({
   url: 'http://lhb1936319431.github.io',
   lang: 'zh-CN',
   title: 'lhb的博客小站',
-  subtitle: '初出茅庐，问剑江湖。',
+  subtitle: '初出茅庐，问剑江湖',
   author: {
     name: 'lhb',
     avatar: 'https://pic1.zhimg.com/v2-569ed873fd835389e1ad2ecb3a7d28cb_r.jpg?source=1940ef5c',

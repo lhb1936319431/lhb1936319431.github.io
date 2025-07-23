@@ -99,7 +99,7 @@ onMounted(() => {
 }
 ```
 
-4. 安装 https://beaudar.lipk.org 到博客仓库
+4. 安装 https://github.com/apps/beaudar 到博客仓库
 
 ##### fuse（静态搜索）
 
