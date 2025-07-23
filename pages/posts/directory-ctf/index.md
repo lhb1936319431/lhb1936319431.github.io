@@ -2,7 +2,7 @@
 title: CTF新生指南-恒星赛
 date: 2025-07-22
 updated: 2025-07-23
-categories: CTF指南
+categories: CTF系列
 tags:
   - CTF
   - 指南
