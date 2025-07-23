@@ -3,6 +3,8 @@ title: CTF新手村
 date: 2025-07-23
 updated: 2025-07-23
 categories: CTF系列
+sidebar: false
+aside: false
 tags:
   - CTF
   - 转载
