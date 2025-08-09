@@ -17,7 +17,7 @@ top: 5
 原文链接：[CTF-QuickStart](https://github.com/x-xiaochengzi/CTF-QuickStart/blob/main/QuickStart.md)  
 （包含详细的学习路线、工具清单和入门题目推荐，建议收藏慢慢看）
 
-### 如果无法访问原文？点击备份链接
+#### 如果无法访问原文？点击备份链接
 备用地址：[CTF新手入门指南备份](http://beidouwangan.cn/posts/c615f69d)  
 （内容和原文一致，放心食用～）
 
