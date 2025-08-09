@@ -30,7 +30,6 @@ top: 1
 1. 准备好环境（挺简单的直接去[ node 中文网](https://nodejs.cn/download)下载)
    - 要求  Node.js  的版本为 `^20.19.0 || >=22.12.0`
 
-
 2. 在电脑里找一个安静的角落打开 CMD 输入命令
 
 ```shell
@@ -40,13 +39,11 @@ npm init valaxy #我选择的是 Blog 和 yarn 组合
 3. 根据自己心情对博客进行微调
    - 在 site.config.ts 和 valaxy.config.ts 里面调整。
 
-
 4. 需要对博客部署托管 （有很多免费方案）
 
    - 选择 Github Pages 最好安装 vs code+git 可以快速提交代码，提交代码可能超时需要耐心等待。
 
    - 具体方法可以搜索Github Pages教程。
-
 
 #### 总结一下
 

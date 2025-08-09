@@ -24,7 +24,6 @@ top: 2
 2. 京东云域名（之前闲置的域名正好用上）  
 3. GitHub Pages（基础托管服务器）  
 
-
 #### 部署环节
 
 ##### beaudar（评论功能）
@@ -92,7 +91,6 @@ onMounted(() => {
 4. 最后在GitHub上安装beaudar应用：  
 打开 [https://github.com/apps/beaudar](https://github.com/apps/beaudar)，授权绑定你的博客仓库，否则评论无法提交。
 
-
 ##### fuse（静态搜索）
 
 fuse是轻量级的前端搜索库，不用后端接口，直接在浏览器里检索内容，适合静态博客：  
@@ -125,7 +123,6 @@ export default defineSiteConfig({
 
 配置后重新构建，博客页面会自动出现搜索框，输入关键词就能匹配内容啦～
 
-
 ##### 七牛云（CDN加速）
 
 核心思路：用七牛云CDN缓存GitHub Pages的内容，通过自己的域名访问，提升国内加载速度。  
@@ -147,8 +144,7 @@ export default defineSiteConfig({
 
 配置完成后，访问`www.你的域名`就会通过七牛云CDN加载内容，速度会比直接访问GitHub Pages快很多～
 
-
-#### 总结
+#### 总结一下
 
 折腾了大半天，总算把评论、搜索和加速都搞定了！  
 虽然每天时间不多，但一点点完善博客的感觉还是挺爽的～  
