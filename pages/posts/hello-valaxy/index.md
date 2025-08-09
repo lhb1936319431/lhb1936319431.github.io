@@ -1,7 +1,7 @@
 ---
 title: 你好, Valaxy博客!
 date: 2025-07-07
-updated: 2025-07-20
+updated: 2025-08-09
 categories: Valaxy博客
 tags:
   - valaxy博客
@@ -53,4 +53,3 @@ npm init valaxy #我选择的是 Blog 和 yarn 组合
 反反复复的也搭建过好几次博客了，都没有坚持下来。
 
 这一次希望能走的更远。
-
