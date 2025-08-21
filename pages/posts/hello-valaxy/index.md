@@ -1,5 +1,5 @@
 ---
-title: 你好, Valaxy博客!
+title: 第一弹:你好, Valaxy博客!
 date: 2025-07-07
 updated: 2025-08-09
 categories: Valaxy博客
