@@ -1,0 +1,101 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "lhb的博客小站",
+  "home_page_url": "http://lhb1936319431.github.io/",
+  "feed_url": "http://lhb1936319431.github.io/feed.json",
+  "description": "记录日常生活的点点滴滴",
+  "icon": "https://pic1.zhimg.com/v2-569ed873fd835389e1ad2ecb3a7d28cb_r.jpg?source=1940ef5c",
+  "favicon": "http://lhb1936319431.github.io/favicon.svg",
+  "authors": [
+    {
+      "name": "lhb",
+      "url": "https://valaxy.site"
+    }
+  ],
+  "items": [
+    {
+      "id": "http://lhb1936319431.github.io/posts/more-valaxy/index",
+      "url": "http://lhb1936319431.github.io/posts/more-valaxy/index",
+      "title": "第三弹:Valaxy博客，用上https了!",
+      "content_html": "<h2>前言</h2>\n<p>博客已经完成大部分工作了，先具体介绍一下我的搭建思路，因为考虑成本原因，选择了静态页面部署。</p>\n<p>部署方案是 Github Pages(代码托管) + Valaxy(博客代码) + 域名</p>\n<br/><p>访问 <a href=\"http://lhb1936319431.github.io/posts/more-valaxy/index\" target=\"_blank\">http://lhb1936319431.github.io/posts/more-valaxy/index</a> 阅读全文。</p>",
+      "date_published": "2025-08-21T00:00:00.000Z",
+      "date_modified": "2025-08-21T00:00:00.000Z",
+      "authors": [
+        {
+          "name": "lhb",
+          "url": "https://valaxy.site"
+        }
+      ]
+    },
+    {
+      "id": "http://lhb1936319431.github.io/posts/directory-anfu/index",
+      "url": "http://lhb1936319431.github.io/posts/directory-anfu/index",
+      "title": "应急手册指南",
+      "content_html": "<h2>前言</h2>\n<p>分享一份实用的应急响应与WEB安全手册，涵盖Windows、Linux系统的应急响应流程，以及WEB安全领域Top10漏洞的原理、危害、修复方案和绕过技巧。内容偏重实战，适合安全服务人员</p>\n<br/><p>访问 <a href=\"http://lhb1936319431.github.io/posts/directory-anfu/index\" target=\"_blank\">http://lhb1936319431.github.io/posts/directory-anfu/index</a> 阅读全文。</p>",
+      "date_published": "2025-08-09T00:00:00.000Z",
+      "date_modified": "2025-07-23T00:00:00.000Z",
+      "authors": [
+        {
+          "name": "lhb",
+          "url": "https://valaxy.site"
+        }
+      ]
+    },
+    {
+      "id": "http://lhb1936319431.github.io/posts/hello-valaxy/index",
+      "url": "http://lhb1936319431.github.io/posts/hello-valaxy/index",
+      "title": "第一弹:你好, Valaxy博客!",
+      "content_html": "<h2>Valaxy</h2>\n<p>博客部署成功了，接下来开始新的牛马人生。</p>\n<h2>简单记录博客搭建过程</h2>\n<h4>需求分析</h4>\n<p>因为需要使用到Github Pages进行部署并托管，我们就需要找静态网站的开源博</p>\n<br/><p>访问 <a href=\"http://lhb1936319431.github.io/posts/hello-valaxy/index\" target=\"_blank\">http://lhb1936319431.github.io/posts/hello-valaxy/index</a> 阅读全文。</p>",
+      "date_published": "2025-08-09T00:00:00.000Z",
+      "date_modified": "2025-07-07T00:00:00.000Z",
+      "authors": [
+        {
+          "name": "lhb",
+          "url": "https://valaxy.site"
+        }
+      ]
+    },
+    {
+      "id": "http://lhb1936319431.github.io/posts/directory-ctf/index",
+      "url": "http://lhb1936319431.github.io/posts/directory-ctf/index",
+      "title": "CTF新生指南-恒星赛",
+      "content_html": "<p>公众号文章链接： <a href=\"https://mp.weixin.qq.com/s/lEgnH7susUy6Th4qWgJrfA\">CTF新生指南原文</a><br>\n比赛平台链接： [恒星赛官方平台](http://</p>\n<br/><p>访问 <a href=\"http://lhb1936319431.github.io/posts/directory-ctf/index\" target=\"_blank\">http://lhb1936319431.github.io/posts/directory-ctf/index</a> 阅读全文。</p>",
+      "date_published": "2025-08-09T00:00:00.000Z",
+      "date_modified": "2025-07-22T00:00:00.000Z",
+      "authors": [
+        {
+          "name": "lhb",
+          "url": "https://valaxy.site"
+        }
+      ]
+    },
+    {
+      "id": "http://lhb1936319431.github.io/posts/https-valaxy/index",
+      "url": "http://lhb1936319431.github.io/posts/https-valaxy/index",
+      "title": "第二弹:Valaxy博客，继续完善!",
+      "content_html": "<h2>对搭建好的博客进行大改造</h2>\n<h4>需求分析</h4>\n<p>博客现在功能还是不够完善，比如<strong>搜索功能</strong>和<strong>评论功能</strong>就完全缺失，这对读者体验影响挺大的。<br>\n因为是静态页面网站，没法自己搞后端服</p>\n<br/><p>访问 <a href=\"http://lhb1936319431.github.io/posts/https-valaxy/index\" target=\"_blank\">http://lhb1936319431.github.io/posts/https-valaxy/index</a> 阅读全文。</p>",
+      "date_published": "2025-08-09T00:00:00.000Z",
+      "date_modified": "2025-07-21T00:00:00.000Z",
+      "authors": [
+        {
+          "name": "lhb",
+          "url": "https://valaxy.site"
+        }
+      ]
+    },
+    {
+      "id": "http://lhb1936319431.github.io/posts/quickstart-ctf/index",
+      "url": "http://lhb1936319431.github.io/posts/quickstart-ctf/index",
+      "title": "CTF新手村",
+      "content_html": "<h2>💖欢迎来到CTF新手村～</h2>\n<p>刚接触CTF的小伙伴是不是经常一脸懵？不知道从哪儿开始学、该练哪些题？别慌！这篇转载的入门指南超适合新手，帮你快速理清思路～</p>\n<p>原文链接：[CTF-QuickSt</p>\n<br/><p>访问 <a href=\"http://lhb1936319431.github.io/posts/quickstart-ctf/index\" target=\"_blank\">http://lhb1936319431.github.io/posts/quickstart-ctf/index</a> 阅读全文。</p>",
+      "date_published": "2025-08-09T00:00:00.000Z",
+      "date_modified": "2025-07-23T00:00:00.000Z",
+      "authors": [
+        {
+          "name": "lhb",
+          "url": "https://valaxy.site"
+        }
+      ]
+    }
+  ]
+}
